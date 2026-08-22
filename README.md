@@ -141,3 +141,24 @@ Without a configuration routing profile, the SSH client defaults to "Key Guessin
 
 Enforcing `IdentitiesOnly yes` forces the SSH sub-system to isolate and map one explicit cryptographic identity to one matching host profile.
 
+
+---
+
+## 📖 Built-In Documentation (`ansible-doc`)
+
+During engineering development or offline lab environments (such as the RHCE exam), use `ansible-doc` to browse parameter requirements, data types, and production examples.
+
+### Core Documentation Shortcuts
+* **View full documentation manual:**
+  ```bash
+  ansible-doc ansible.builtin.file
+  ```
+* **Extract a clean YAML code block snippet (ideal for playbooks):**
+  ```bash
+  ansible-doc -s ansible.builtin.user
+  ```
+* **List all active system modules:**
+  ```bash
+  ansible-doc -l
+  ```
+
