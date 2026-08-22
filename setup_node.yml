@@ -1,0 +1,15 @@
+---
+- name: Deplay and initialize Apache web server on target myhost group
+  hosts: myhosts
+  become: true
+
+  tasks: 
+    - name: Install httpd package
+      ansible.builtin.dnf:
+        name: httpd
+        state: latest
+    - name: Start and enable httpd service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
