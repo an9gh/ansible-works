@@ -112,3 +112,32 @@ Trigger your deployment code via the command-line interface using an ad-hoc ping
 ansible all -m ping
 ```
 
+
+---
+
+## 📘 Reference: Managing Multiple Identities (Session vs. Configuration)
+
+When handling multiple SSH keys on a control node, there are two primary management methods. Using a dedicated configuration profile file is the standard best practice for multi-key management.
+
+### Method A: Temporary Sessions (`ssh-agent` + `ssh-add`)
+```bash
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/ansible
+```
+* **Pros:** Ideal for quick, one-off runtime tasks or working with transient infrastructure.
+* **Cons:** Temporary. The memory process terminates when you close your terminal window or restart your system, forcing you to reload keys manually.
+
+### Method B: Permanent Multi-Key Routing Matrix (`~/.ssh/config`)
+```text
+Host github.com
+  IdentityFile ~/.ssh/ansible
+  IdentitiesOnly yes
+```
+* **Pros:** Persistent, automated, and scales seamlessly across dozens of different infrastructure keys.
+* **Cons:** Requires file creation and precise syntax parameters.
+
+### 💡 Why `~/.ssh/config` is the Right Choice
+Without a configuration routing profile, the SSH client defaults to "Key Guessing Mode"—sending every identity file listed inside `~/.ssh/` to the target host sequentially. This behavior triggers explicit security thresholds on remote hosts, leading to a `Too many authentication failures` rejection error. 
+
+Enforcing `IdentitiesOnly yes` forces the SSH sub-system to isolate and map one explicit cryptographic identity to one matching host profile.
+
