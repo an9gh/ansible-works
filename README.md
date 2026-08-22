@@ -25,3 +25,90 @@ Once the foundation was ready, I configured the control node:
 
 > 💡 **The Core Takeaway:** Ansible doesn't replace sysadmin fundamentals — it depends on them completely. No amount of automation tooling fixes broken SSH authentication or missing privileges.
 
+
+
+## Step-by-Step Installation & Lab Setup
+
+Follow this sequence of steps to reproduce this exact lab infrastructure environment:
+
+### 1. Network & Host Configuration (All Nodes)
+Open the local hosts file across your instances to map your node hostnames directly:
+```bash
+sudo vi /etc/hosts
+```
+Add the corresponding local IP mapping layout for your specific KVM virtual environment:
+```text
+# Example infrastructure layout mappings
+192.168.122.10   control
+192.168.122.21   node1
+192.168.122.22   node2
+```
+
+### 2. User & Sudo Privilege Escalation (Managed Nodes)
+Log into both **node1** and **node2** to create your dedicated automation user account and provide passwordless execution privileges:
+```bash
+# Create the user
+sudo useradd -m jon
+
+# Set an initial account password
+sudo passwd jon
+
+# Configure passwordless sudo entry
+echo "jon ALL=(ALL) NOPASSWD: ALL" | sudo tee /etc/sudoers.d/jon
+```
+
+### 3. Passwordless SSH Architecture (Control Node)
+Generate your secure, dedicated cryptographic identity file on the control workstation and distribute it to your managed endpoints:
+```bash
+# Generate a dedicated key pair named 'ansible'
+ssh-keygen -t ed25519 -f ~/.ssh/ansible -N ""
+
+# Copy the public identification file to each host using hostname targets
+ssh-copy-id -i ~/.ssh/ansible.pub jon@node1
+ssh-copy-id -i ~/.ssh/ansible.pub jon@node2
+```
+
+### 4. Engine Installation & Workspace Initialization (Control Node)
+Install the core runtime engine onto the control workstation, set up your project tree, and initialize configuration variables:
+```bash
+# Update repository lists and install Ansible core packages
+sudo apt update && sudo apt install ansible -y
+
+# Verify execution engine path and installation version
+ansible --version
+
+# Build your production workspace directory tree
+mkdir -p ~/ansible && cd ~/ansible
+
+# Initialize your engine workspace variables
+touch ansible.cfg inventory.ini
+```
+
+### 5. Component Configuration & Blueprint Architecture
+Populate your key configuration and targeting files with your host infrastructure parameters:
+
+**`ansible.cfg`**
+```ini
+[defaults]
+inventory = inventory.ini
+remote_user = jon
+host_key_checking = False
+```
+
+**`inventory.ini`**
+```ini
+# Ungrouped verification node mapping
+node1
+
+# Dynamic collection-grouped targeting architecture
+[webservers]
+node2
+```
+
+### 6. Orchestration Execution Verification
+Trigger your deployment code via the command-line interface using an ad-hoc ping module test to check connection mapping paths:
+```bash
+# Execute standard infrastructure ad-hoc validation test
+ansible all -m ping
+```
+
