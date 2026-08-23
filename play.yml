@@ -1,0 +1,38 @@
+---
+- name: Creating file and directory
+  hosts: node1
+  become: true
+
+  tasks: 
+    - name: Create a file named file_xy in jon's home directory
+      ansible.builtin.file:
+        path: /home/jon/file_xy
+        state: touch
+
+    - name: Create a directory named dir01
+      ansible.builtin.file: 
+        path: /home/jon/dir01
+        state: directory 
+
+- name: User,group creation and management
+  hosts: node2
+  become: true
+  
+  tasks: 
+    - name: create a developer group
+      ansible.builtin.group: 
+        name: developer
+        state: present
+
+    - name: create dev1 user and assign to developer group
+      ansible.builtin.user: 
+        name: dev1
+        state: present
+        groups: developer
+        append: true
+       
+
+
+
+
+
