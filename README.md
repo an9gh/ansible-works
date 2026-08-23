@@ -255,3 +255,46 @@ Below is the verification screenshot confirming the structured deployment playbo
 
 ![Ansible Playbook Run Success Result](images/playbook_result.png)
 
+---
+
+## 🗂️ Advanced Inventory Architecture (Parent-Child Groups)
+
+To scale infrastructure footprints efficiently without duplicating node definitions, the inventory utilizes a **Parent-Child nested group hierarchy**.
+
+### Hierarchical Inventory Configuration (`inventory.ini`)
+The `redhat` parent group nests the existing `myhosts` and `webservers` groups under a unified tracking block:
+
+```ini
+# Base Infrastructure Group Definitions
+[myhosts]
+node1
+
+[webservers]
+node2
+
+# Parent-Child Nested Architecture Group
+[redhat:children]
+myhosts
+webservers
+```
+
+### Structural Mapping Verification
+To confirm that the automation runtime engine maps the child associations correctly, execute the following visualization parsing utility:
+```bash
+ansible-inventory --graph
+```
+
+**Expected Structural Output Layout:**
+```text
+@all:
+  |--@redhat:
+
+  |  |--@myhosts:
+  |  |  |--node1
+  |  |--@webservers:
+  |  |  |--node2
+  |--@ungrouped:
+```
+
+### Design Engineering Advantage
+By declaring `[redhat:children]`, you can target the entire multi-tiered cluster simultaneously in playbooks using a single call (`hosts: redhat`).
