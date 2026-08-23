@@ -217,3 +217,41 @@ ansible all -m ansible.builtin.service -a "name=apache2 state=started enabled=ye
 * **`state=started`**: Forces the application engine to launch immediately in system background space.
 * **`enabled=yes`**: Configures the underlying bootloader to preserve system service states across future machine reboots.
 
+---
+
+## 🚀 Automating with Playbooks
+
+Once the foundational ad-hoc connection infrastructure is verified, tasks can be grouped into reusable code blueprints called **Playbooks**.
+
+### Core Playbook Blueprint (`setup_node.yml`)
+This playbook connects to your target environment hosts, elevates runtime permissions using `sudo`, installs the web engine suite via the package management system, and initializes the application daemon state:
+
+```yaml
+---
+- name: Deplay and initialize Apache web server on target myhost group
+  hosts: myhosts
+  become: true
+
+  tasks:
+    - name: Install httpd package
+      ansible.builtin.dnf:
+        name: httpd
+        state: latest
+    - name: Start and enable httpd service
+      ansible.builtin.service:
+        name: httpd
+        state: started
+        enabled: true
+```
+
+### Execution & Deployment
+Run this command from your control node project workspace directory to deploy the web infrastructure across your managed nodes:
+```bash
+ansible-playbook setup_node.yml
+```
+
+### 📊 Verification of Execution Output
+Below is the verification screenshot confirming the structured deployment playbook ran successfully against all managed infrastructure endpoints inside the KVM laboratory:
+
+![Ansible Playbook Run Success Result](images/playbook_result.png)
+
