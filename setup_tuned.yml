@@ -19,6 +19,10 @@
         state: started
         enabled: true
 
+    - name: Check active profile
+      ansible.builtin.command:
+        cmd: tuned-adm active # finding which profile is currently active      
+
     - name: setup performance profile using tuned-adm
       ansible.builtin.command:
         cmd: tuned-adm profile balanced # changing tuned profile to balanced
