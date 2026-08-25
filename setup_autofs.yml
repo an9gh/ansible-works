@@ -2,6 +2,8 @@
 - name: Install & configure autofs service
   hosts: webservers
   become: true
+  vars_files: 
+    - /root/ansible/vars.yml  
   
   tasks: 
     - name: Install AutoFs service
