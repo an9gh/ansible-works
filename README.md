@@ -371,5 +371,5 @@ package_name: autofs
 ansible-playbook setup_autofs.yml
 ```
 #### ⚠️ Undefined Variable Failure Reference
-![Playbook Missing Variable Error](images/playbook_error.png)
+![Playbook Missing Variable Error](images/autofs_without_vars_files.png)
 
