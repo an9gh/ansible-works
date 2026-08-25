@@ -1,0 +1,10 @@
+---
+- name: Install & configure autofs service
+  hosts: webservers
+  become: true
+  
+  tasks: 
+    - name: Install AutoFs service
+      ansible.builtin.dnf:
+        name: "{{ package_name }}"
+        state: latest
