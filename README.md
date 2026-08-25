@@ -340,29 +340,24 @@ Below is the terminal log capture showing the variable-driven automation running
 
 ![Tuned Playbook Execution Result](images/setup_tuned-result.png)
 
-
 ---
 
 ## 📂 Modular Architecture: External Variables (`vars_files`)
 
-To separate automation logic from environmental configuration parameters, variables can be decoupled into isolated, external YAML sheets. This approach isolates playbook blueprints from underlying inventory-specific strings.
-
-### 1. External Variable Mapping Space (`vars.yml`)
-This flat configuration sheet holds data key-value pairs independently from any tasks:
+### 1. External Variable File (`vars.yml`)
 ```yaml
 ---
 package_name: autofs
 ```
 
-### 2. Implementation Playbook Blueprint (`setup_autofs.yml`)
-The playbook links the external file layout via the `vars_files` directive, pointing directly to the target filesystem allocation to resolve dynamic arguments cleanly:
+### 2. Implementation Playbook (`setup_autofs.yml`)
 ```yaml
 ---
 - name: Install & configure autofs service
   hosts: webservers
   become: true
   vars_files:
-    - /root/ansible/vars.yml # Loading external variables located inside project directory
+    - /root/ansible/vars.yml
 
   tasks:
     - name: Install AutoFs service
@@ -375,14 +370,6 @@ The playbook links the external file layout via the `vars_files` directive, poin
 ```bash
 ansible-playbook setup_autofs.yml
 ```
-
-
-### 📊 Comparative Execution Output Analysis
-Below is the structural comparison demonstrating the visual log difference between a standard playbook run versus an optimized, decoupled external variable file architecture:
-
-#### Execution Flow Using External `vars_files`
-![Playbook Run With External Variables](images/autofs_with_vars_files.png)
-
-#### Standard Execution Flow (Without `vars_files`)
-![Playbook Run Without External Variables](images/autofs_without_vars_files.png)
+#### ⚠️ Undefined Variable Failure Reference
+![Playbook Missing Variable Error](images/playbook_error.png)
 
