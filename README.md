@@ -340,3 +340,39 @@ Below is the terminal log capture showing the variable-driven automation running
 
 ![Tuned Playbook Execution Result](images/setup_tuned-result.png)
 
+
+---
+
+## 📂 Modular Architecture: External Variables (`vars_files`)
+
+To separate automation logic from environmental configuration parameters, variables can be decoupled into isolated, external YAML sheets. This approach isolates playbook blueprints from underlying inventory-specific strings.
+
+### 1. External Variable Mapping Space (`vars.yml`)
+This flat configuration sheet holds data key-value pairs independently from any tasks:
+```yaml
+---
+package_name: autofs
+```
+
+### 2. Implementation Playbook Blueprint (`setup_autofs.yml`)
+The playbook links the external file layout via the `vars_files` directive, pointing directly to the target filesystem allocation to resolve dynamic arguments cleanly:
+```yaml
+---
+- name: Install & configure autofs service
+  hosts: webservers
+  become: true
+  vars_files:
+    - /root/ansible/vars.yml # Loading external variables located inside project directory
+
+  tasks:
+    - name: Install AutoFs service
+      ansible.builtin.dnf:
+        name: "{{ package_name }}"
+        state: latest
+```
+
+### Execution Baseline
+```bash
+ansible-playbook setup_autofs.yml
+```
+
