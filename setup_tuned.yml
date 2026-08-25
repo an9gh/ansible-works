@@ -1,0 +1,20 @@
+---
+- name: Install and setup tuned service.
+  hosts: myhosts
+  become: true
+    
+  vars:
+    pkg_tuned: tuned
+    tuned_service: tuned
+    
+  tasks:
+    - name: Install package tuned
+      ansible.builtin.dnf:
+        name: "{{ pkg_tuned }}"  
+        state: latest
+
+    - name: Start and enable tuned service
+      ansible.builtin.service:
+        name: "{{ tuned_service }}"
+        state: started
+        enabled: true
