@@ -18,3 +18,13 @@
         name: "{{ tuned_service }}"
         state: started
         enabled: true
+
+    - name: setup performance profile using tuned-adm
+      ansible.builtin.command:
+        cmd: tuned-adm profile balanced # changing tuned profile to balanced
+
+
+
+
+
+
