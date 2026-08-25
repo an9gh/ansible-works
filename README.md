@@ -376,3 +376,13 @@ The playbook links the external file layout via the `vars_files` directive, poin
 ansible-playbook setup_autofs.yml
 ```
 
+
+### 📊 Comparative Execution Output Analysis
+Below is the structural comparison demonstrating the visual log difference between a standard playbook run versus an optimized, decoupled external variable file architecture:
+
+#### Execution Flow Using External `vars_files`
+![Playbook Run With External Variables](images/autofs_with_vars_files.png)
+
+#### Standard Execution Flow (Without `vars_files`)
+![Playbook Run Without External Variables](images/autofs_without_vars_files.png)
+
