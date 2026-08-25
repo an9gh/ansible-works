@@ -298,3 +298,45 @@ ansible-inventory --graph
 
 ### Design Engineering Advantage
 By declaring `[redhat:children]`, you can target the entire multi-tiered cluster simultaneously in playbooks using a single call (`hosts: redhat`).
+
+
+---
+
+## ⚙️ Performance Tuning Automation (`vars`)
+
+This playbook demonstrates the implementation of **Ansible Variables (`vars`)**. Using template variables (`{{ variable_name }}`) keeps tasks completely decoupled from hardcoded parameters, allowing for scalable configurations.
+
+### Performance Tuning Blueprint (`setup_tuned.yml`)
+```yaml
+---
+- name: Install and setup tuned service
+  hosts: myhosts
+  become: true
+
+  vars:
+    pkg_tuned: tuned
+    tuned_service: tuned
+
+  tasks:
+    - name: Install and setup tuned service
+      ansible.builtin.dnf:
+        name: "{{ pkg_tuned }}"
+        state: latest
+
+    - name: Start and enable tuned service
+      ansible.builtin.service:
+        name: "{{ tuned_service }}"
+        state: started
+        enabled: true
+```
+
+### Execution Command
+```bash
+ansible-playbook setup_tuned.yml
+```
+
+### 📊 Verification of Execution Output
+Below is the terminal log capture showing the variable-driven automation running successfully across target environments:
+
+![Tuned Playbook Execution Result](images/setup_tuned-result.png)
+
