@@ -1,5 +1,5 @@
 packages:
-  - service: httpd
-  - service: autofs
-  - service: tuned
-  - service: firewalld 
+  - { service: 'httpd', state: 'present' }
+  - { service: 'autofs', state: 'latest' }
+  - { service: 'tuned', state: 'absent' }
+  - { service: 'firewalld', state: 'present' }
