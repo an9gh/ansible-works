@@ -373,3 +373,42 @@ ansible-playbook setup_autofs.yml
 #### ⚠️ Undefined Variable Failure Reference
 ![Playbook Missing Variable Error](images/autofs_without_vars_files.png)
 
+---
+
+## 🔁 Loop Architectures (`loop` + `vars_files`)
+
+To manage complex software baselines efficiently, this playbook decouples the target application payload into a dictionary array stored inside an external variables file, processing the matrix using an **Ansible Loop**.
+
+### 1. External Package Matrix Definition (`vars_pkg.yml`)
+The structured list isolates package definitions cleanly from the task framework:
+```yaml
+---
+packages:
+  - service: httpd
+  - service: autofs
+  - service: tuned
+  - service: firewalld
+```
+
+### 2. Implementation Loop Playbook (`loop.yml`)
+The engine dynamically iterates through the data map using the `item.service` variable evaluation engine to provision all software baselines concurrently across the `redhat` parent group:
+```yaml
+---
+- name: Installing service packages using loop
+  hosts: redhat
+  become: true
+  vars_files: /root/ansible/vars_pkg.yml
+
+  tasks:
+    - name: Install packages
+      ansible.builtin.dnf:
+        name: "{{ item.service }}"
+        state: present
+      loop: "{{ packages }}"
+```
+
+### Execution Baseline
+```bash
+ansible-playbook loop.yml
+```
+
