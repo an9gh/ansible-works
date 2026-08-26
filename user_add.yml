@@ -1,0 +1,21 @@
+---
+- name: User creation & managing user password usig Vault
+  hosts: redhat
+  become: true
+  vars_files: 
+    - /root/ansible/user_passwd.yml
+
+  tasks: 
+    - name: Create user called jenny
+      user:
+        name: jenny
+        state: present
+        password: "{{ user1_passwd }}"
+
+    - name: Create user called lana
+      user:
+        name: lana
+        state: present
+        password: "{{ user2_passwd }}"
+
+
