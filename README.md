@@ -411,4 +411,8 @@ The engine dynamically iterates through the data map using the `item.service` va
 ```bash
 ansible-playbook loop.yml
 ```
+### 📊 Verification of Loop Execution Output
+Below is the terminal log capture showing the loop automation processing the variable list concurrently across all target infrastructure endpoints:
+
+![Ansible Loop Playbook Run Result](images/loop_pkg.png)
 
