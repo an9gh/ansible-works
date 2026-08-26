@@ -416,3 +416,42 @@ Below is the terminal log capture showing the loop automation processing the var
 
 ![Ansible Loop Playbook Run Result](images/loop_pkg.png)
 
+---
+
+## 🔁 Advanced Loop Architectures (`loop` + `vars_files`)
+
+To manage complex software baselines efficiently, this playbook decouples the target application payload into an inline compact matrix array stored inside an external variables file, processing the matrix using an **Ansible Loop**.
+
+### 1. External variables holding file (`vars_pkg.yml`)
+This flat configuration sheet holds inline data maps independently from any tasks, allowing you to explicitly dictate separate software states (such as installing, upgrading, or removing) in a single block:
+```yaml
+---
+packages:
+  - { service: 'httpd', state: 'present' }
+  - { service: 'autofs', state: 'latest' }
+  - { service: 'tuned', state: 'absent' }
+  - { service: 'firewalld', state: 'present' }
+```
+
+### 2. Implementation Loop Playbook (`loop.yml`)
+The orchestration engine parses through the inline dictionaries using the `item.service` and `item.state` data keys concurrently:
+```yaml
+---
+- name: Installing service packages using dynamic loop
+  hosts: redhat
+  become: true
+  vars_files: /root/ansible/vars_pkg.yml
+
+  tasks:
+    - name: Install packages
+      ansible.builtin.dnf:
+         name: "{{ item.service }}"
+         state: "{{ item.state }}"
+      loop: "{{ packages }}"
+```
+
+### Execution Baseline
+```bash
+ansible-playbook loop.yml
+```
+
