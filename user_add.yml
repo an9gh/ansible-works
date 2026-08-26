@@ -10,12 +10,12 @@
       user:
         name: jenny
         state: present
-        password: "{{ user1_passwd }}"
+        password: "{{ user1_passwd | password_hash('sha512') }}"
 
     - name: Create user called lana
       user:
         name: lana
         state: present
-        password: "{{ user2_passwd }}"
+        password: "{{ user2_passwd | password_hash('sha512')}}"
 
 
