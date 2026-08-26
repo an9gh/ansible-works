@@ -455,3 +455,94 @@ The orchestration engine parses through the inline dictionaries using the `item.
 ansible-playbook loop.yml
 ```
 
+---
+
+## 🔐 Managing Passwords with Ansible Vault
+
+This section shows how to create users and keep their passwords safe using an encrypted file.
+
+### Step-by-Step Vault Setup
+
+1. **Create the encrypted password file:**
+   Run this command to create a new secure file named `user_passwd.yml`. It will ask you to type a vault master password:
+   ```bash
+   ansible-vault create user_passwd.yml
+   ```
+
+2. **Add your secret variables inside the file:**
+   Inside the encrypted file, type your password variables using this exact layout:
+   ```yaml
+   ---
+   user1_passwd: "your_password_for_jenny"
+   user2_passwd: "your_password_for_lana"
+   ```
+
+3. **How to edit the passwords later (Optional):**
+   If you ever need to change these passwords, use this command to decrypt, edit, and re-lock the file automatically:
+   ```bash
+   ansible-vault edit user_passwd.yml
+   ```
+
+### Playbook Blueprint (`user_add.yml`)
+The playbook automatically unlocks the encrypted file at runtime and changes the passwords into secure hashes so they work safely on Linux systems.
+
+```yaml
+---
+- name: User creation & managing user password usig Vault
+  hosts: redhat
+  become: true
+  vars_files:
+    - /root/ansible/user_passwd.yml
+
+  tasks:
+    - name: Create user called jenny
+      user:
+        name: jenny
+        state: present
+        password: "{{ user1_passwd | password_hash('sha512') }}"
+
+    - name: Create user called lana
+      user:
+        name: lana
+        state: present
+        password: "{{ user2_passwd | password_hash('sha512')}}"
+```
+
+### How to Run the Playbook
+
+You can run this playbook using two different methods to decrypt your password file:
+
+#### Method 1: Using an Interactive Password Prompt
+This method stops and asks you to type your vault password manually in the terminal before running:
+```bash
+ansible-playbook user_add.yml --ask-vault-pass
+```
+
+#### Method 2: Using an Automated Password File (`pass.txt`)
+This method reads the password automatically from your text file so you do not have to type anything:
+```bash
+ansible-playbook user_add.yml --vault-password-file pass.txt
+```
+
+---
+
+### 📊 Verification of Encrypted User Provisioning Output
+Below is the terminal log capture showing the playbook decrypting the secret values and running successfully against both infrastructure endpoints:
+
+![Ansible Vault Run Verification](images/vault_user_result.png)
+
+---
+
+### 🔐 Filesystem Security Verification (`/etc/shadow` Analysis)
+To confirm that the automation runtime engine handles secret payloads safely without leaking structural credentials to administrative logs, we inspect the `/etc/shadow` access authorization files across managed nodes:
+
+#### Insecure Baseline (Before Applying Hash Filter)
+⚠️ **Security Risk:** Without an explicit hashing algorithm filter, the plain string key payload is written directly into system storage files in cleartext format, rendering system credentials vulnerable to local privilege escalation discovery:
+![Shadow File Plaintext Leak](images/shadow_before_hash.png)
+
+#### Secure Baseline (After Applying `password_hash('sha512')`)
+✅ **Production Compliant:** Filtering the dynamic vault variables through the SHA-512 processor ensures that the system compiles a standard cryptographically salted shadow ledger entry (identifiable by the secure `$6$` SHA-512 designation prefix flag):
+![Shadow File Securely Hashed](images/shadow_after_hash.png)
+
+---
+
