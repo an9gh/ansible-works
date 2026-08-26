@@ -1,0 +1,12 @@
+---
+- name: Installing service packages using loop
+  hosts: redhat
+  become: true
+  vars_files: /root/ansible/vars_pkg.yml
+
+  tasks: 
+    - name: Install packages
+      ansible.builtin.dnf:
+         name: "{{ item.service }}"
+         state: present
+      loop: "{{ packages }}"
