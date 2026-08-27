@@ -3,19 +3,20 @@
   hosts: redhat
   become: true
   vars_files: 
-    - /root/ansible/user_passwd.yml
+    - /root/ansible/user_passwd.yml # location of user password that secured by vault.
 
   tasks: 
     - name: Create user called jenny
       user:
         name: jenny
         state: present
-        password: "{{ user1_passwd | password_hash('sha512') }}"
+        password: "{{ user1_passwd | password_hash('sha512') }}" # applied SHA512 hash filter
 
     - name: Create user called lana
       user:
         name: lana
         state: present
-        password: "{{ user2_passwd | password_hash('sha512')}}"
+        password: "{{ user2_passwd | password_hash('sha512')}}" # applied SHA512 hash filter
+
 
 
