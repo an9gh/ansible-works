@@ -25,4 +25,9 @@
         name: httpd
         state: restarted
 
-
+    - name: Allow http through the firewall
+      firewalld:
+        service: http
+        immediate: yes # reload firewall
+        permanent: true
+        state: enabled
