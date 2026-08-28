@@ -1,0 +1,10 @@
+---
+- name: Publish Content using Httpd
+  hosts: node1
+  become: true
+
+  taska: 
+    - name: Installing Httpd package
+      yum:
+        name: httpd
+        state: latest
