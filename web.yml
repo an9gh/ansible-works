@@ -15,4 +15,9 @@
         state: started
         enabled: true
 
+    - name: Adding web content
+      copy:
+        content: 'Hello, This page is published by using Ansible'
+        dest: /var/www/html/index.html
+
 
