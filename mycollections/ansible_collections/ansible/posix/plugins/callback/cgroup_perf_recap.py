@@ -6,6 +6,9 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+ANSIBLE_METADATA = {'metadata_version': '1.1',
+                    'status': ['preview'],
+                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
     name: cgroup_perf_recap
@@ -129,7 +132,6 @@ DOCUMENTATION = '''
 
 import csv
 import datetime
-import json
 import os
 import time
 import threading
@@ -138,8 +140,9 @@ from abc import ABCMeta, abstractmethod
 
 from functools import partial
 
-from ansible.module_utils.common.text.converters import to_bytes, to_text
-from ansible.parsing.ajson import AnsibleJSONEncoder
+from ansible.module_utils._text import to_bytes, to_text
+from ansible.module_utils.six import with_metaclass
+from ansible.parsing.ajson import AnsibleJSONEncoder, json
 from ansible.plugins.callback import CallbackBase
 
 
@@ -154,7 +157,7 @@ def dict_fromkeys(keys, default=None):
     return d
 
 
-class BaseProf(threading.Thread, metaclass=ABCMeta):
+class BaseProf(with_metaclass(ABCMeta, threading.Thread)):
     def __init__(self, path, obj=None, writer=None):
         threading.Thread.__init__(self)  # pylint: disable=non-parent-init-called
         self.obj = obj

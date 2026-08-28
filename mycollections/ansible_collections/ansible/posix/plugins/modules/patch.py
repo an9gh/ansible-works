@@ -24,7 +24,7 @@ options:
   basedir:
     description:
       - Path of a base directory in which the patch file will be applied.
-      - May be omitted when O(dest) option is specified, otherwise required.
+      - May be omitted when C(dest) option is specified, otherwise required.
     type: path
   dest:
     description:
@@ -37,7 +37,7 @@ options:
   src:
     description:
       - Path of the patch file as accepted by the GNU patch tool. If
-        O(remote_src=false), the patch source file is looked up from the
+        C(remote_src) is C(false), the patch source file is looked up from the
         module's I(files) directory.
     type: path
     required: true
@@ -50,8 +50,8 @@ options:
     default: present
   remote_src:
     description:
-      - If V(false), it will search for src at originating/controller machine,
-      - If C(true), it will go to the remote/target machine for the O(src).
+      - If C(false), it will search for src at originating/controller machine, if C(true) it will
+        go to the remote/target machine for the C(src).
     type: bool
     default: false
   strip:
@@ -68,15 +68,15 @@ options:
     default: false
   binary:
     description:
-      - Setting to V(true) will disable patch's heuristic for transforming CRLF
+      - Setting to C(true) will disable patch's heuristic for transforming CRLF
         line endings into LF.
-      - Line endings of O(src) and O(dest) must match.
-      - If set to V(false), C(patch) will replace CRLF in O(src) files on POSIX.
+      - Line endings of src and dest must match.
+      - If set to C(false), C(patch) will replace CRLF in C(src) files on POSIX.
     type: bool
     default: false
   ignore_whitespace:
     description:
-      - Setting to V(true) will ignore white space changes between patch and input.
+      - Setting to C(true) will ignore white space changes between patch and input.
     type: bool
     default: false
 notes:
@@ -106,7 +106,7 @@ import os
 import platform
 from traceback import format_exc
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
+from ansible.module_utils._text import to_native
 
 
 class PatchError(Exception):

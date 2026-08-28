@@ -19,7 +19,7 @@ version_added: "1.0.0"
 options:
     name:
         description:
-            - The dot-separated path (also known as O(key)) specifying the sysctl variable.
+            - The dot-separated path (also known as I(key)) specifying the sysctl variable.
         required: true
         aliases: [ 'key' ]
         type: str
@@ -41,10 +41,9 @@ options:
         default: false
     reload:
         description:
-            - If V(true), performs a C(/sbin/sysctl -p) if the O(sysctl_file) is
-              updated. If V(false), does not reload C(sysctl) even if the
-              O(sysctl_file) is updated.
-            - For FreeBSD, can not be used with O(sysctl_file) other than C(/etc/sysctl.conf) or C(/etc/sysctl.conf.local).
+            - If C(true), performs a I(/sbin/sysctl -p) if the C(sysctl_file) is
+              updated. If C(false), does not reload I(sysctl) even if the
+              C(sysctl_file) is updated.
         type: bool
         default: true
     sysctl_file:
@@ -54,20 +53,9 @@ options:
         type: path
     sysctl_set:
         description:
-            - Verify token value with the sysctl command and set with C(-w) if necessary.
+            - Verify token value with the sysctl command and set with -w if necessary.
         type: bool
         default: false
-attributes:
-  check_mode:
-    support: full
-    description: Can run in check_mode and return changed status prediction without modifying target.
-  diff_mode:
-    support: none
-    description: Does not support differences output.
-  platform:
-    platforms: posix
-    support: full
-    description: Supported on POSIX-compliant systems.
 author:
 - David CHANIAL (@davixx)
 '''
@@ -92,13 +80,6 @@ EXAMPLES = r'''
     sysctl_file: /tmp/test_sysctl.conf
     reload: false
 
-# Enable resource limits management in FreeBSD
-- ansible.posix.sysctl:
-    name: kern.racct.enable
-    value: '1'
-    sysctl_file: /boot/loader.conf
-    reload: false
-
 # Set ip forwarding on in /proc and verify token value with the sysctl command
 - ansible.posix.sysctl:
     name: net.ipv4.ip_forward
@@ -119,20 +100,12 @@ EXAMPLES = r'''
 import os
 import platform
 import re
-import sys
 import tempfile
 
-# TODO(Python2): On Python 2, string_types is basestring (str + unicode).
-# This module may run on target hosts with Python 2.7.
-# Remove the Python 2 branch when Python 2 support is dropped.
-if sys.version_info >= (3, 0):
-    string_types = str
-else:
-    string_types = basestring  # pylint: disable=undefined-variable
-
 from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.common.text.converters import to_native
+from ansible.module_utils.six import string_types
 from ansible.module_utils.parsing.convert_bool import BOOLEANS_FALSE, BOOLEANS_TRUE
+from ansible.module_utils._text import to_native
 
 
 class SysctlModule(object):
@@ -166,11 +139,6 @@ class SysctlModule(object):
     def process(self):
 
         self.platform = platform.system().lower()
-
-        # system specific tests
-        freebsd_sysctl_files = ['/etc/sysctl.conf', '/etc/sysctl.conf.local']
-        if self.platform == 'freebsd' and self.sysctl_file not in freebsd_sysctl_files and self.args['reload']:
-            self.module.fail_json(msg="%s can not be reloaded. Set reload=False." % self.sysctl_file)
 
         # Whitespace is bad
         self.args['name'] = self.args['name'].strip()
@@ -398,7 +366,7 @@ class SysctlModule(object):
     # Completely rewrite the sysctl file
     def write_sysctl(self):
         # open a tmp file
-        fd, tmp_path = tempfile.mkstemp('.conf', '.ansible_m_sysctl_', os.path.dirname(os.path.realpath(self.sysctl_file)))
+        fd, tmp_path = tempfile.mkstemp('.conf', '.ansible_m_sysctl_', os.path.dirname(self.sysctl_file))
         f = open(tmp_path, "w")
         try:
             for l in self.fixed_lines:
@@ -409,7 +377,7 @@ class SysctlModule(object):
         f.close()
 
         # replace the real one
-        self.module.atomic_move(tmp_path, os.path.realpath(self.sysctl_file))
+        self.module.atomic_move(tmp_path, self.sysctl_file)
 
 
 # ==============================================================

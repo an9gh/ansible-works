@@ -1,5 +1,3 @@
-needs/privileged
-needs/root
 destructive
 shippable/posix/group1
 skip/aix

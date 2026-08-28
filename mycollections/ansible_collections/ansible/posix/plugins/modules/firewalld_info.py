@@ -21,7 +21,7 @@ options:
     zones:
         description:
             - Gather information about specific zones.
-            - If only works if O(active_zones=false).
+            - If only works if C(active_zones) is set to C(false).
         required: false
         type: list
         elements: str
@@ -210,8 +210,7 @@ firewalld_info:
 '''
 
 from ansible.module_utils.basic import AnsibleModule, missing_required_lib
-from ansible.module_utils.common.text.converters import to_native
-from ansible_collections.ansible.posix.plugins.module_utils._respawn import respawn_module, HAS_RESPAWN_UTIL
+from ansible.module_utils._text import to_native
 from ansible_collections.ansible.posix.plugins.module_utils.version import StrictVersion
 
 
@@ -319,19 +318,18 @@ def main():
         active_zones=module.params['active_zones'],
         collected_zones=list(),
         undefined_zones=list(),
+        warnings=list(),
     )
 
     # Exit with failure message if requirements modules are not installed.
-    if not HAS_DBUS and not HAS_FIREWALLD and HAS_RESPAWN_UTIL:
-        # Only respawn the module if both libraries are missing.
-        # If only one is available, then usage of the "wrong" (i.e. not the system one)
-        # python interpreter is likely not the problem.
-        respawn_module("firewall")
-
     if not HAS_DBUS:
         module.fail_json(msg=missing_required_lib('python-dbus'))
     if not HAS_FIREWALLD:
         module.fail_json(msg=missing_required_lib('python-firewall'))
+
+    # If you want to show warning messages in the task running process,
+    # you can append the message to the 'warn' list.
+    warn = list()
 
     try:
         client = fw_client.FirewallClient()
@@ -351,8 +349,8 @@ def main():
             specified_zones = module.params['zones']
             collect_zones = list(set(specified_zones) & set(all_zones))
             ignore_zones = list(set(specified_zones) - set(collect_zones))
-            if ignore_zones:
-                module.warn('Please note: zone:(%s) have been ignored in the gathering process.' % ", ".join(ignore_zones))
+            warn.append(
+                'Please note: zone:(%s) have been ignored in the gathering process.' % ','.join(ignore_zones))
         else:
             collect_zones = get_all_zones(client)
 
@@ -391,6 +389,7 @@ def main():
     result['collected_zones'] = collect_zones
     result['undefined_zones'] = ignore_zones
     result['firewalld_info'] = firewalld_info
+    result['warnings'] = warn
     module.exit_json(**result)
 
 

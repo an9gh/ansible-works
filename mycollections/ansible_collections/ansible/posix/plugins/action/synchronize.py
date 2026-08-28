@@ -18,11 +18,12 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 import os.path
-from collections.abc import MutableSequence
-from shlex import quote as shlex_quote
 
 from ansible import constants as C
-from ansible.module_utils.common.text.converters import to_text
+from ansible.module_utils.six import string_types
+from ansible.module_utils.six.moves import shlex_quote
+from ansible.module_utils._text import to_text
+from ansible.module_utils.common._collections_compat import MutableSequence
 from ansible.module_utils.parsing.convert_bool import boolean
 from ansible.plugins.action import ActionBase
 from ansible.plugins.loader import connection_loader
@@ -76,14 +77,7 @@ class ActionModule(ActionBase):
 
         if self._host_is_ipv6_address(host):
             return '[%s%s]:%s' % (user_prefix, host, path)
-
-        # preserve formatting of remote paths if host or user@host is explicitly defined in the path
-        if ':' not in path:
-            return '%s%s:%s' % (user_prefix, host, path)
-        elif '@' not in path:
-            return '%s%s' % (user_prefix, path)
-        else:
-            return path
+        return '%s%s:%s' % (user_prefix, host, path)
 
     def _process_origin(self, host, path, user):
 
@@ -183,7 +177,7 @@ class ActionModule(ActionBase):
 
         # Store remote connection type
         self._remote_transport = self._connection.transport
-        use_ssh_args = _tmp_args.pop('use_ssh_args', False)
+        use_ssh_args = _tmp_args.pop('use_ssh_args', None)
 
         if use_ssh_args and self._connection.transport == 'ssh':
             ssh_args = [
@@ -191,7 +185,7 @@ class ActionModule(ActionBase):
                 self._connection.get_option('ssh_common_args'),
                 self._connection.get_option('ssh_extra_args'),
             ]
-            _tmp_args['_ssh_args'] = ' '.join([a for a in ssh_args if a])
+            _tmp_args['ssh_args'] = ' '.join([a for a in ssh_args if a])
 
         # Handle docker connection options
         if self._remote_transport in DOCKER:
@@ -290,6 +284,9 @@ class ActionModule(ActionBase):
         # told (via delegate_to) that a different host is the source of the
         # rsync
         if not use_delegate and remote_transport:
+            # Create a connection to localhost to run rsync on
+            new_stdin = self._connection._new_stdin
+
             # Unlike port, there can be only one shell
             localhost_shell = None
             for host in C.LOCALHOST:
@@ -318,11 +315,7 @@ class ActionModule(ActionBase):
                 localhost_executable = C.DEFAULT_EXECUTABLE
             self._play_context.executable = localhost_executable
 
-            try:
-                new_connection = connection_loader.get('local', self._play_context)
-            except TypeError:
-                # Needed for ansible-core < 2.15
-                new_connection = connection_loader.get('local', self._play_context, self._connection._new_stdin)
+            new_connection = connection_loader.get('local', self._play_context, new_stdin)
             self._connection = new_connection
             # Override _remote_is_local as an instance attribute specifically for the synchronize use case
             # ensuring we set local tmpdir correctly
@@ -416,7 +409,7 @@ class ActionModule(ActionBase):
             # Replicate what we do in the module argumentspec handling for lists
             if not isinstance(_tmp_args.get('rsync_opts'), MutableSequence):
                 tmp_rsync_opts = _tmp_args.get('rsync_opts', [])
-                if isinstance(tmp_rsync_opts, str):
+                if isinstance(tmp_rsync_opts, string_types):
                     tmp_rsync_opts = tmp_rsync_opts.split(',')
                 elif isinstance(tmp_rsync_opts, (int, float)):
                     tmp_rsync_opts = [to_text(tmp_rsync_opts)]

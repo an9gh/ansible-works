@@ -1,4 +1,3 @@
----
 # Test playbook for the firewalld module - protocol operations
 # (c) 2022, Robért S. Guhr <rguhr@cronon.net>
 
@@ -17,50 +16,50 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-- name: Firewalld protocol test permanent enabled
-  ansible.posix.firewalld:
+- name: firewalld protocol test permanent enabled
+  firewalld:
     protocol: ospf
     permanent: true
     state: enabled
   register: result
 
-- name: Assert firewalld protocol test permanent enabled worked
-  ansible.builtin.assert:
+- name: assert firewalld protocol test permanent enabled worked
+  assert:
     that:
-      - result is changed
+    - result is changed
 
-- name: Firewalld protocol test permanent enabled rerun (verify not changed)
-  ansible.posix.firewalld:
+- name: firewalld protocol test permanent enabled rerun (verify not changed)
+  firewalld:
     protocol: ospf
     permanent: true
     state: enabled
   register: result
 
-- name: Assert firewalld protocol test permanent enabled rerun worked (verify not changed)
-  ansible.builtin.assert:
+- name: assert firewalld protocol test permanent enabled rerun worked (verify not changed)
+  assert:
     that:
-      - result is not changed
+    - result is not changed
 
-- name: Firewalld protocol test permanent disabled
-  ansible.posix.firewalld:
+- name: firewalld protocol test permanent disabled
+  firewalld:
     protocol: ospf
     permanent: true
     state: disabled
   register: result
 
-- name: Assert firewalld protocol test permanent disabled worked
-  ansible.builtin.assert:
+- name: assert firewalld protocol test permanent disabled worked
+  assert:
     that:
-      - result is changed
+    - result is changed
 
-- name: Firewalld protocol test permanent disabled rerun (verify not changed)
-  ansible.posix.firewalld:
+- name: firewalld protocol test permanent disabled rerun (verify not changed)
+  firewalld:
     protocol: ospf
     permanent: true
     state: disabled
   register: result
 
-- name: Assert firewalld protocol test permanent disabled rerun worked (verify not changed)
-  ansible.builtin.assert:
+- name: assert firewalld protocol test permanent disabled rerun worked (verify not changed)
+  assert:
     that:
-      - result is not changed
+    - result is not changed
