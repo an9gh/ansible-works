@@ -546,3 +546,71 @@ To confirm that the automation runtime engine handles secret payloads safely wit
 
 ---
 
+---
+
+## 🌐 Publishing Web Content and Managing Firewalls
+
+This section shows how to automatically install a web server, publish HTML content, and configure firewall rules so the web page can be accessed over the network.
+
+### The Problem Encountered
+When first running the playbook without firewall rules, the web server installed correctly and the content was placed on the server, but the web page **would not load** in a browser. This happened because the system firewall was blocking incoming HTTP network traffic. 
+
+Adding a dedicated firewall task to allow the `http` service resolved the issue completely.
+
+### Web Deployment Playbook (`web.yml`)
+This is the exact playbook used to deploy the web server and open the required network ports:
+```yaml
+- name: Publish Web Content using Httpd
+  hosts: node1
+  become: true
+
+  tasks:
+    - name: Installing Httpd package
+      yum:
+        name: httpd
+        state: latest
+
+    - name: Start & enable httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Adding web content
+      copy:
+        content: 'Hello, This page is published by using Ansible'
+        dest: /var/www/html/index.html
+
+    - name: Restart the httpd service
+      service:
+        name: httpd
+        state: restarted
+
+    - name: Allow http through the firewall
+      firewalld:
+        service: http
+        immediate: yes # reload firewall
+        permanent: true
+        state: enabled
+```
+
+### How to Run the Playbook
+Run this command from your workspace terminal to execute the deployment:
+```bash
+ansible-playbook web.yml
+```
+
+---
+
+### 📊 Verification and Web Access Troubleshooting
+
+Below is the visual verification showing the network connection behavior before and after opening the firewall rules:
+
+#### Connection Failure (Before Firewall Rule)
+When trying to load the website initially, the connection timed out because the traffic could not pass through the firewall:
+![Web Page Error Before Firewall](images/web_before_firewall.png)
+
+#### Connection Success (After Firewall Rule)
+Once the `firewalld` task opened the `http` service, the web page loaded perfectly across the network:
+![Web Page Working After Firewall](images/web_after_firewall.png)
+
