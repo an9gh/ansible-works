@@ -693,4 +693,30 @@ Use these commands on your control node terminal to manage, list, and verify you
   ```text
   COLLECTIONS_PATHS(/root/ansible/ansible.cfg) = ['/root/ansible/mycollections']
   ```
+---
+
+### ⚠️ Troubleshooting: Resolving Collection Version Warnings
+
+When running the playbook, this warning message appeared because version `2.2.2` of the collection is too new for **Ansible version 2.14.18**:
+
+```text
+\$ ansible-playbook web.yml 
+[WARNING]: Collection ansible.posix does not support Ansible version 2.14.18
+```
+
+To fix this, you must downgrade to the compatible **version 1.5.4** using one of these two methods:
+
+#### Method 1: The Online Method (Requires Internet Access)
+If your machine has a live internet connection, force the downgrade directly from the Ansible Galaxy servers:
+```bash
+ansible-galaxy collection install ansible.posix:==1.5.4 --force
+```
+
+#### Method 2: The Offline Method
+If your control node is offline, download the file on your workstation, copy it over, and force-install the local archive payload:
+```bash
+
+# 2. Force install the archive locally on your control node terminal
+ansible-galaxy collection install ansible-posix-1.5.4.tar.gz -p mycollections --force
+```
 
