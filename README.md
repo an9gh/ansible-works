@@ -614,3 +614,49 @@ When trying to load the website initially, the connection timed out because the 
 Once the `firewalld` task opened the `http` service, the web page loaded perfectly across the network:
 ![Web Page Working After Firewall](images/web_after_firewall.png)
 
+
+
+---
+
+## 📦 Manual Installation of Offline Ansible Collections
+
+This section shows how to manually download, transfer, configure, and install an offline Ansible Collection from the Ansible Galaxy ecosystem into a custom project directory.
+
+### Project Context & Use Case
+The default configuration required a specialized module named `firewalld` to control system security rules. This module is packaged inside the **`ansible.posix`** collection space alongside 13 other administration modules.
+
+### Step-by-Step Installation Workflow
+
+1. **Download the Collection Archive Asset:**
+   Navigate to the official portal (`https://galaxy.ansible.com/ui/`), locate the **`ansible.posix`** namespace page under the Collections repository segment, and download the standalone compressed archive source file to your workstation desktop machine:
+   * **Target File Asset:** `ansible-posix-2.2.2.tar.gz`
+
+2. **Transfer the Archive Asset over SFTP(not a mandatory step):** 
+   Execute a file transfer from your local workstation terminal to pull the downloaded archive asset cleanly over your custom network port directly into your active control node laboratory project workspace directory:
+   ```bash
+   sftp user@ip_address
+   # Inside the sftp prompt, run:
+   get /home/user/Downloads/ansible-posix-2.2.2.tar.gz //root/ansible/
+   ```
+
+3. **Initialize a Dedicated Storage Path:**
+   Build an isolated configuration folder structure inside your project workspace root to store third-party collection content dependencies independently from default global system directories:
+   ```bash
+   mkdir mycollections
+   ```
+
+4. **Configure Local Isolation Parameters (`ansible.cfg`):**
+   Open your local project configuration layout file and add the `collections_path` string pointer direction line to force the execution engine to search your new directory space for community modules first:
+   ```ini
+   [defaults]
+   collections_path = ./mycollections
+   ```
+
+5. **Deploy the Offline Collection Framework Archive:**
+   Run the native deployment tracking utility to extract and register the workspace library framework straight into your target path mapping space:
+   ```bash
+   ansible-galaxy collection install ansible-posix-2.2.2.tar.gz -p mycollections/
+   ```
+
+### Operational Verification
+Once the extraction completes successfully, the underlying collection frameworks and all 14 embedded administrative modules (including `firewalld`) are fully registered and ready to execute across your cluster targets without requiring a live external internet connection.
