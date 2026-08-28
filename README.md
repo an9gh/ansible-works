@@ -720,3 +720,57 @@ If your control node is offline, download the file on your workstation, copy it 
 ansible-galaxy collection install ansible-posix-1.5.4.tar.gz -p mycollections --force
 ```
 
+---
+
+## ⚡ Optimizing Restarts with Ansible Handlers
+
+This section shows how to use **Ansible Handlers** to manage service restarts efficiently.
+
+### Why Use Handlers?
+In the earlier version of the web playbook, a manual restart task ran every single time the playbook executed—even if the web content never changed. This is inefficient for production systems. 
+
+By adding a `notify` directive to the web content task and linking it to a `handlers` block, the Apache service now **only restarts if the index.html file content is modified**. If the file remains unchanged, the restart is skipped, keeping the deployment fast and clean.
+
+### Updated Playbook with Handlers (`web.yml`)
+```yaml
+- name: Publish Web Content using Httpd
+  hosts: node1
+  become: true
+
+  tasks:
+    - name: Installing Httpd package
+      yum:
+        name: httpd
+        state: latest
+
+    - name: Start & enable httpd service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+    - name: Adding web content
+      copy:
+        content: 'Hello, This page is published by using Ansible'
+        dest: /var/www/html/index.html
+      notify: Restart Apache Service
+
+    - name: Allow http through the firewall
+      firewalld:
+        service: http
+        immediate: yes
+        permanent: true
+        state: enabled
+
+  handlers:
+    - name: Restart Apache Service
+      service:
+        name: httpd
+        state: restarted
+```
+
+### Execution Baseline
+```bash
+ansible-playbook web.yml
+```
+
