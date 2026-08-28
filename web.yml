@@ -19,11 +19,7 @@
       copy:
         content: 'Hello, This page is published by using Ansible'
         dest: /var/www/html/index.html
-
-    - name: Restart the httpd service
-      service:
-        name: httpd
-        state: restarted
+      notify: Restart Apache Service # Triggers the handler if content changes
 
     - name: Allow http through the firewall
       firewalld:
@@ -31,3 +27,10 @@
         immediate: yes # reload firewall
         permanent: true
         state: enabled
+
+  handlers:          
+    - name: Restart Apache Service # Runs only when notified by a task change
+      service:
+        name: httpd
+        state: restarted
+
