@@ -3,7 +3,7 @@
   hosts: node1
   become: true
 
-  taska: 
+  tasks: 
     - name: Installing Httpd package
       yum:
         name: httpd
