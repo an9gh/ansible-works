@@ -660,3 +660,37 @@ The default configuration required a specialized module named `firewalld` to con
 
 ### Operational Verification
 Once the extraction completes successfully, the underlying collection frameworks and all 14 embedded administrative modules (including `firewalld`) are fully registered and ready to execute across your cluster targets without requiring a live external internet connection.
+
+
+
+### 🔍 Useful Collection Commands
+
+Use these commands on your control node terminal to manage, list, and verify your locally installed collection frameworks:
+
+* **List all installed collections:**
+  See a clean list of every collection available to your project, along with its exact version number and where it is stored on your disk:
+  ```bash
+  ansible-galaxy collection list
+  ```
+
+* **Verify collection details and version numbers:**
+  Confirm that your custom path mapping is working and that `ansible.posix` version `2.2.2` is recognized by the engine:
+  ```bash
+  ansible-galaxy collection list -p mycollections
+  ```
+
+* **Browse module documentation offline (`ansible-doc`):**
+  Look up the required parameters, options, and syntax examples for your newly installed `firewalld` module without needing an internet connection:
+  ```bash
+  ansible-doc ansible.posix.firewalld
+  ```
+* **Verify active configuration path values (`ansible-config dump`):**
+  Dump the runtime configuration parameters out of system memory and filter for your specific collection keys. This confirms that the engine is actively reading your local configuration file changes:
+  ```bash
+  ansible-config dump | grep COLLECTIONS_PATHS
+  ```
+  **Expected Output String Result:**
+  ```text
+  COLLECTIONS_PATHS(/root/ansible/ansible.cfg) = ['/root/ansible/mycollections']
+  ```
+
