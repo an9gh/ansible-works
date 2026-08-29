@@ -17,7 +17,7 @@
 
     - name: Adding web content
       copy:
-        content: '<h1>Hello, This page is published by using Ansible<h1>'
+        src: index.html
         dest: /var/www/html/index.html
       notify: Restart Apache Service # Triggers the handler if content changes
 
