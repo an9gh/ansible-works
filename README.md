@@ -774,3 +774,34 @@ By adding a `notify` directive to the web content task and linking it to a `hand
 ansible-playbook web.yml
 ```
 
+# Documentation: Essential Rules for Ansible Handlers
+
+Ansible Handlers are specialized, reactive tasks that only run when triggered by another task. Understanding their core operational behavior is critical for writing efficient and reliable automation.
+
+---
+
+## 📌 Critical Operational Rules
+
+### 1. Driven Strictly by "Changed" Status
+* Handlers **only execute** if the notifying task returns a status of `changed`.
+* If a task returns `ok` (no changes needed) or `failed`, the handler will remain dormant and will not run.
+
+### 2. Executed at the Very End
+* By default, handlers wait and run **exactly once at the very end of the entire play**, after all regular tasks have completely finished.
+* They run in the order they are defined under the `handlers:` block, *not* the order in which they were notified by tasks.
+
+### 3. Automatic De-duplication
+* If multiple tasks notify the exact same handler during a play (e.g., updating three different configuration files), the handler still executes **only once** at the end.
+
+### 4. Case-Sensitive Exact Matching
+* The text provided to the `notify` directive must be an **exact, case-sensitive match** to the `name` of the handler. 
+* Any mismatch in spacing, punctuation, or capitalization will cause a runtime error.
+
+### 5. Canceled on Playbook Failures
+* If a regular task fails mid-playbook, Ansible stops execution immediately. Any pending handlers that were triggered earlier in the play are **discarded and will not run**.
+* To override this and force handlers to run despite later failures, you must explicitly set `force_handlers: true` in your play properties.
+
+### 6. Strictly for Secondary Reactions
+* Handlers should only be used for **non-destructive, secondary operations** like `restarted`, `reloaded`, or `flushed`.
+* **Never place core business logic** (like creating users, installing packages, or mounting drives) inside a handler. If the triggering task doesn't report a change, your critical setup steps will be skipped entirely.
+
