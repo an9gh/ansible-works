@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ansible Core Automation</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #111111;
+            line-height: 1.6;
+            max-width: 650px;
+            margin: 0 auto;
+            padding: 60px 24px;
+        }
+
+        header {
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #666666;
+            font-size: 1rem;
+        }
+
+        main {
+            margin-bottom: 48px;
+        }
+
+        h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 40px;
+            margin-bottom: 16px;
+            color: #444444;
+        }
+
+        p {
+            font-size: 1rem;
+            margin-bottom: 16px;
+            color: #222222;
+        }
+
+        ul {
+            padding-left: 20px;
+            margin-bottom: 24px;
+        }
+
+        li {
+            margin-bottom: 8px;
+            color: #222222;
+        }
+
+        /* Pure CSS Diagram Architecture */
+        .diagram-container {
+            background-color: #fafafa;
+            border: 1px solid #eaeaea;
+            border-radius: 8px;
+            padding: 32px 16px;
+            margin: 24px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .diagram-node {
+            background-color: #ffffff;
+            border: 1px solid #111111;
+            padding: 12px 20px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            width: 220px;
+        }
+
+        .diagram-node.source {
+            border-color: #4f46e5;
+            color: #4f46e5;
+            background-color: #f5f3ff;
+        }
+
+        .diagram-arrow {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #666666;
+            font-weight: 500;
+            gap: 2px;
+        }
+
+        .diagram-arrow::after {
+            content: "↓";
+            font-size: 1.2rem;
+            color: #111111;
+        }
+
+        .target-group {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            width: 100%;
+        }
+
+        .diagram-node.target {
+            width: 130px;
+            border-style: dashed;
+            background-color: #fafafa;
+        }
+
+        footer {
+            border-top: 1px solid #eeeeee;
+            padding-top: 24px;
+            font-size: 0.85rem;
+            color: #888888;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Ansible Automation</h1>
+        <div class="subtitle">Radically simple IT orchestration.</div>
+    </header>
+
+    <main>
+        <p>Ansible is an open-source automation engine that automates cloud provisioning, configuration management, application deployment, and intra-service orchestration.</p>
+
+        <h2>How Ansible Executes</h2>
+        <p>Unlike complex agent-based architectures, Ansible establishes instant pipelines on top of existing secure connection layers:</p>
+
+        <!-- Visual Architecture Flowchart -->
+        <div class="diagram-container">
+            <div class="diagram-node source">
+                Control Node<br>
+                <small style="font-weight: 400; color:#666666;">Playbook + Inventory</small>
+            </div>
+            
+            <div class="diagram-arrow">SSH(Agentless Connection)</div>
+            
+            <div class="target-group">
+                <div class="diagram-node target">Managed Node 1<br><small style="font-weight:400; color:#666666;">(e.g., node1)</small></div>
+                <div class="diagram-node target">Managed Node 2</div>
+                <div class="diagram-node target">Managed Node 3</div>
+            </div>
+        </div>
+
+        <h2>Core Concepts</h2>
+        <ul>
+            <li><strong>Agentless:</strong> No software or daemons to install on target client nodes. It utilizes standard OpenSSH.</li>
+            <li><strong>Idempotent:</strong> Operation tasks only make changes if changes are required to reach the target state.</li>
+            <li><strong>Playbooks:</strong> Simple, human-readable YAML configurations used to declare exact system states.</li>
+        </ul>
+    </main>
+
+    <footer>
+        <p>Managed via automation • System active</p>
+    </footer>
+
+</body>
+</html>
