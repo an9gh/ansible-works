@@ -910,7 +910,7 @@ This blueprint imports the pre-built `timesync` system role and dynamically inje
 To build out your custom configurations safely, you can read through the official documentation examples provided inside the system path (`/usr/share/doc/rhel-system-roles/timesync/`). 
 
 The screenshot below shows the official multi-server blueprint template that was referenced:
-
+This below role section is inside /usr/share/doc/rhel-system-roles/timesync/README.md
 ![Official Multi Server Timesync Role Example Template](images/ntp/ntp_role_template.png)
 
 #### Your Custom Modifications Applied:
