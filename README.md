@@ -892,7 +892,7 @@ This blueprint imports the pre-built `timesync` system role and dynamically inje
     - rhel-system-roles.timesync
 ```
 
-3. **Configure local project isolation (`ansible.cfg`):**
+1. **Configure local project isolation (`ansible.cfg`):**
    Create a local `roles/` directory inside your project folder and update your global configuration file so the engine looks inside your workspace folder first:
    ```ini
    [defaults]
@@ -909,8 +909,9 @@ This blueprint imports the pre-built `timesync` system role and dynamically inje
 
 To build out your custom configurations safely, you can read through the official documentation examples provided inside the system path (`/usr/share/doc/rhel-system-roles/timesync/`). 
 
+This role section is inside `/usr/share/doc/rhel-system-roles/timesync/README.md`
+
 The screenshot below shows the official multi-server blueprint template that was referenced:
-This below role section is inside /usr/share/doc/rhel-system-roles/timesync/README.md
 ![Official Multi Server Timesync Role Example Template](images/ntp/ntp_role_template.png)
 
 #### Your Custom Modifications Applied:
