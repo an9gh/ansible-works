@@ -1,0 +1,4 @@
+---
+- name: Time sync between devices
+  hosts: all 
+  become: true
