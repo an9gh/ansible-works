@@ -1020,3 +1020,25 @@ Run this command from your main project folder to deploy your custom role:
 ansible-playbook role.yml
 ```
 
+---
+
+## 📊 Custom Role Execution & Browser Verification
+
+After deploying your custom webserver role, you can verify that the automation process completed perfectly using your two execution screenshots:
+
+### 1. Automation Playbook Verification
+The screenshot below shows the successful execution of your deployment. Ansible safely connected to your target host as user `jon`, applied root privileges via `become: true`, compiled your dynamic Jinja2 template, and triggered your handler to restart the Apache service:
+
+```bash
+ansible-playbook role.yml
+```
+
+![Custom Role Playbook Execution Result](images/role_playbook_success.png)
+
+---
+
+### 2. Live Browser Results Verification
+The screenshot below shows the final web page loading successfully inside a web browser. It proves that the Jinja2 template engine worked flawlessly by automatically pulling live data from the server (Ansible Facts) and displaying your hardware stats and deployment timestamps on the screen without any manual input:
+
+![Web Server Browser Results Proof](images/role_browser_success.png)
+
