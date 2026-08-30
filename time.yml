@@ -2,3 +2,11 @@
 - name: Time sync between devices
   hosts: all 
   become: true
+
+  vars:
+    timesync_ntp_servers:
+      - hostname: 14.139.60.103
+        iburst: yes
+  roles:
+    - rhel-system-roles.timesync
+
