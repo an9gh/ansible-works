@@ -848,3 +848,47 @@ handlers:
 * **Efficiency:** Prevents slow, unnecessary system service restarts if nothing changed.
 * **Reliability:** Ensures your web server does not reload broken configurations mid-playbook if an earlier file task crashes.
 
+---
+---
+
+## 🏗️ Managing Infrastructure with Ansible Roles
+
+This section shows how to configure local role paths, import an official system role, and implement a centralized time synchronization policy using dynamic parameters.
+
+### Role Discovery & Paths Setup
+
+1. **Install Red Hat System Roles (If not present):**
+   If the official Red Hat system roles package is missing from your control node, install it using your package manager before proceeding:
+   ```bash
+   yum install rhel-system-roles -y
+   ```
+
+2. **Locate default system roles:**
+   Find the pre-installed system roles on your control node filesystem:
+   ```bash
+   ansible-galaxy role list or ansible-galaxy list
+   ```
+   *Note: The official Red Hat system roles are stored at `/usr/share/ansible/roles/`.*
+
+3. **Configure local project isolation (`ansible.cfg`):**
+   Create a local `roles/` directory inside your project folder and update your global configuration file so the engine looks inside your workspace folder first:
+   ```ini
+   [defaults]
+   roles_path = ./roles:/usr/share/ansible/roles:/etc/ansible/roles
+   ```
+
+### Time Synchronization Playbook (`time.yml`)
+This blueprint imports the pre-built `timesync` system role and dynamically injects a strategic local NTP time-server array across all managed host environments:
+
+```yaml
+- name: Time sync between devices
+  hosts: all
+  become: true
+  vars:
+    timesync_ntp_servers:
+      - hostname: 14.139.60.103
+        iburst: yes
+  roles:
+    - rhel-system-roles.timesync
+```
+
