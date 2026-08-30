@@ -903,3 +903,17 @@ This blueprint imports the pre-built `timesync` system role and dynamically inje
    
    ![Active Ansible Configuration File Parameters](images/ntp/ansible_cfg_roles.png)
 
+---
+
+### 📝 Reference Template Modification Strategy
+
+To build out your custom configurations safely, you can read through the official documentation examples provided inside the system path (`/usr/share/doc/rhel-system-roles/timesync/`). 
+
+The screenshot below shows the official multi-server blueprint template that was referenced:
+
+![Official Multi Server Timesync Role Example Template](images/ntp/ntp_role_template.png)
+
+#### Your Custom Modifications Applied:
+To fit your local lab environment boundaries perfectly, you streamlined this template inside your active **`time.yml`** playbook file. You swapped out the generic domain configurations (`://example.com`) and replaced them with your live atomic network address pointer (`14.139.60.103`) to establish functional, real-world clock synchronization.
+
+
