@@ -892,3 +892,14 @@ This blueprint imports the pre-built `timesync` system role and dynamically inje
     - rhel-system-roles.timesync
 ```
 
+3. **Configure local project isolation (`ansible.cfg`):**
+   Create a local `roles/` directory inside your project folder and update your global configuration file so the engine looks inside your workspace folder first:
+   ```ini
+   [defaults]
+   roles_path = ./roles:/usr/share/ansible/roles:/etc/ansible/roles
+   ```
+   
+   Below is the active configuration layout confirming all local collection paths and system role directory strings are mapped correctly:
+   
+   ![Active Ansible Configuration File Parameters](images/ntp/ansible_cfg_roles.png)
+
