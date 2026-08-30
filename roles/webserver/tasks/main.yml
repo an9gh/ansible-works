@@ -1,2 +1,18 @@
 ---
-# tasks file for webserver
+- name: Install httpd package
+  yum:
+    name: httpd
+    state: latest
+
+- name: Start & enable
+  service:
+    name: httpd
+    state: started
+    enabled: true
+
+- name: Add content in index.html
+  template:
+    src: index.html.j2
+    dest: /var/www/html/index.html
+  notify: Restart httpd service
+
