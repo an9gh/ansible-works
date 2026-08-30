@@ -1,0 +1,8 @@
+---
+- name: Web Server Deployment using Ansible Role
+  hosts: node2
+  remote_user: jon
+  become: true
+  roles:
+    - webserver
+
