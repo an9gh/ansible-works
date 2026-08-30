@@ -917,4 +917,40 @@ The screenshot below shows the official multi-server blueprint template that was
 #### Your Custom Modifications Applied:
 To fit your local lab environment boundaries perfectly, you streamlined this template inside your active **`time.yml`** playbook file. You swapped out the generic domain configurations (`://example.com`) and replaced them with your live atomic network address pointer (`14.139.60.103`) to establish functional, real-world clock synchronization.
 
+---
+
+## 🔍 Verification of Network Time Synchronization
+
+After running the playbook, you can verify that your time synchronization settings were successfully applied using two simple methods:
+
+### Method 1: Checking Active Synchronization (`chronyc sources`)
+This method verifies that the system service is **actively running and communicating** with your target time server over the network. 
+
+Run this command to check live time sources across all managed nodes:
+```bash
+ansible all -m ansible.builtin.command -a "chronyc sources"
+```
+
+#### Live Connection Output Proof:
+The **`^*`** marker next to the time server name confirms that both `node1` and `node2` have successfully locked onto the atomic time stream:
+![Chrony Network Time Verification Log Output](images/ntp/timesync_verify01.png)
+
+*💡 **Note:** Even though the terminal printed out the domain name `mail.nplindia.org` instead of the raw IP address, that domain name maps directly to your exact target server `14.139.60.107` .*
+
+---
+
+### Method 2: Checking Configuration Storage (`chrony.conf`)
+This method verifies that the Ansible role successfully wrote your exact server IP address straight into the **system configuration file** on the disk.
+
+Run this command to check the configuration lines inside the file on your managed hosts:
+```bash
+ansible all -m command -a "grep 14.139.60.103 /etc/chrony.conf"
+or
+ansible all -m command -a 'cat /etc/chrony.conf'  #it will show full content inside chrony.conf
+
+```
+
+#### Live Storage Verification Output Proof:
+This log confirms that your custom server configurations were successfully written to the file system across all nodes:
+![Chrony Configuration File Verification Log Output](images/ntp/timesync_verify02.png)
 
