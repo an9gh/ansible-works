@@ -954,3 +954,69 @@ ansible all -m command -a 'cat /etc/chrony.conf'  #it will show full content ins
 This log confirms that your custom server configurations were successfully written to the file system across all nodes:
 ![Chrony Configuration File Verification Log Output](images/ntp/timesync_verify02.png)
 
+---
+
+## 🏗️ Building Custom Ansible Roles (`ansible-galaxy init`)
+
+This section shows how to initialize, structure, and deploy a custom Apache web server role from scratch using template files and handlers.
+
+### Step-by-Step Role Architecture Setup
+
+1. **Initialize the Role Directory Structure:**
+   Navigate into your project's `roles/` directory and use the galaxy utility to generate the standard scaffolding:
+   ```bash
+   mkdir -p roles && cd roles
+   ansible-galaxy init webrole
+   ```
+
+2. **Define the Task Workflow (`webrole/tasks/main.yml`):**
+   This file manages package installation, service initiation, and web content delivery:
+   ```yaml
+   - name: Install httpd package
+     yum:
+       name: httpd
+       state: latest
+
+   - name: Start & enable
+     service:
+       name: httpd
+       state: started
+       enabled: true
+
+   - name: Add content in index.html
+     template:
+       src: index.html.j2
+       dest: /var/www/html/index.html
+     notify: Restart httpd service
+   ```
+
+3. **Configure the Smart Automation Handler (`webrole/handlers/main.yml`):**
+   The handler ensures Apache restarts only when your template file configuration actually updates:
+   ```yaml
+   - name: Restart httpd servic
+     service:
+       name: httpd
+       state: restarted
+   ```
+
+4. **Create the Jinja2 Template Source Layout (`webrole/templates/index.html.j2`):**
+   This file holds the dynamic content layout that Ansible compiles and deploys to the web servers.
+
+### The Role Deployment Playbook (`role.yml`)
+Created inside the main project directory, this playbook maps the custom role directly to your target host group:
+```yaml
+---
+- name: Web Server Deployment using Ansible Role
+  hosts: node2
+  remote_user: jon
+  become: true
+  roles:
+    - webserver
+```
+
+### Execution Baseline
+Run this command from your main project folder to deploy your custom role:
+```bash
+ansible-playbook role.yml
+```
+
