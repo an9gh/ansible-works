@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ansible Dynamic Web Page</title>
+</head>
+<body>
+    <h1>Hello! This page was created using an Ansible Jinja2 Template.</h1>
+    <p>This managed node is named: <strong>{{ ansible_facts['hostname'] }}</strong></p>
+    <p>The IP address of this server is: <strong>{{ ansible_facts['default_ipv4']['address'] }}</strong></p>
+    <p>Operating System: <strong>{{ ansible_facts['distribution'] }} {{ ansible_facts['distribution_version'] }}</strong></p>
+</body>
+</html>
+
