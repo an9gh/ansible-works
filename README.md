@@ -1033,12 +1033,12 @@ The screenshot below shows the successful execution of your deployment. Ansible 
 ansible-playbook role.yml
 ```
 
-![Custom Role Playbook Execution Result](images/role_playbook_success.png)
+![Custom Role Playbook Execution Result](images/web-role/role_playbook_success.png)
 
 ---
 
 ### 2. Live Browser Results Verification
 The screenshot below shows the final web page loading successfully inside a web browser. It proves that the Jinja2 template engine worked flawlessly by automatically pulling live data from the server (Ansible Facts) and displaying your hardware stats and deployment timestamps on the screen without any manual input:
 
-![Web Server Browser Results Proof](images/role_browser_success.png)
+![Web Server Browser Results Proof](images/web-role/role_browser_success.png)
 
