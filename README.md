@@ -178,20 +178,20 @@ ansible all -m ansible.builtin.ping
 Manage user and security group profiles on target host filesystems:
 
 * **Group Creation (`node1` only):**
-  Create a secure user group named `sysops` on your first target environment node:
+  Create a secure user group named `development` on your first target environment node:
   ```bash
-  ansible node1 -m ansible.builtin.group -a "name=sysops state=present" --become
+  ansible node1 -m ansible.builtin.group -a "name=development state=present"
   ```
 * **User Account Provisioning (`node1` only):**
   Provision a new user account named `operator`, explicitly linking them to your fresh system group:
   ```bash
-  ansible node1 -m ansible.builtin.user -a "name=operator group=sysops state=present" --become
+  ansible node1 -m ansible.builtin.user -a "name=user1 group=development state=present"
   ```
 
 ### 3. Software Package Management (All Nodes)
 Install foundational system tooling across your cluster nodes simultaneously:
 ```bash
-ansible all -m ansible.builtin.apt -a "name=curl state=present update_cache=yes" --become
+ansible all -m ansible.builtin.yum -a "name=vim state=present update_cache=yes"
 ```
 * **`update_cache=yes`**: Safely syncs local repository cache sheets prior to downloading package payloads.
 
@@ -201,18 +201,18 @@ Provision directories and initialize system files securely across your targets:
 * **Directory Creation:**
   Build a dedicated configuration folder structure inside the root-level path:
   ```bash
-  ansible all -m ansible.builtin.file -a "path=/etc/appdata state=directory mode=0755" --become
+  ansible all -m ansible.builtin.file -a "path=/etc/appdata state=directory mode=0755"
   ```
 * **File Initialization:**
   Create an empty log tracking file with precise user profile ownership limits inside that folder:
   ```bash
-  ansible all -m ansible.builtin.file -a "path=/etc/appdata/system.log state=touch mode=0644 owner=jon" --become
+  ansible all -m ansible.builtin.file -a "path=/etc/appdata/system.log state=touch mode=0644 owner=jon"
   ```
 
 ### 5. Service Daemon Orchestration
 Control the execution state of system services across your target deployment pools:
 ```bash
-ansible all -m ansible.builtin.service -a "name=apache2 state=started enabled=yes" --become
+ansible all -m ansible.builtin.service -a "name=httpd state=started enabled=yes"
 ```
 * **`state=started`**: Forces the application engine to launch immediately in system background space.
 * **`enabled=yes`**: Configures the underlying bootloader to preserve system service states across future machine reboots.
